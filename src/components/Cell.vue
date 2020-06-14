@@ -1,5 +1,5 @@
 <template>
-    <span v-bind:class="{ live: isLive, dead: !isLive }"></span>
+    <span :class="{ live: isLive, dead: !isLive }"></span>
 </template>
 
 <script lang="ts">
