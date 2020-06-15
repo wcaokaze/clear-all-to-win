@@ -1,9 +1,9 @@
 <template>
     <div class="home">
         <div class="field">
-            <Cell class="cell" :style="cellStyle"/>
-            <Cell class="cell" :style="cellStyle"/>
-            <Cell class="cell" :style="cellStyle"/>
+            <div class="row" v-for="y in 3">
+                <Cell class="cell" v-for="x in 3" :style="cellStyle"/>
+            </div>
         </div>
     </div>
 </template>
@@ -51,8 +51,15 @@
     .field {
         width 100%
         display flex
-        flex-direction row
+        flex-direction column
         flex-wrap nowrap
-        justify-content center
+
+        .row {
+            width 100%
+            display flex
+            flex-direction row
+            flex-wrap nowrap
+            justify-content center
+        }
     }
 </style>
