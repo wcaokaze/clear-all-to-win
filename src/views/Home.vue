@@ -1,8 +1,8 @@
 <template>
     <div class="home">
         <div class="field">
-            <div class="row" v-for="y in 3">
-                <Cell class="cell" v-for="x in 3" :style="cellStyle"/>
+            <div class="row" v-for="row in field">
+                <Cell class="cell" v-for="cell in row" :style="cellStyle" :is-live="cell"/>
             </div>
         </div>
     </div>
@@ -20,6 +20,12 @@
     export default class Home extends Vue {
         private width  = 0;
         private height = 0;
+
+        private field: boolean[][] = [
+            [true,  false, false],
+            [true,  true,  false],
+            [false, true,  true ]
+        ];
 
         private get cellStyle(): string {
             const cellSize = Math.min(this.width / 3.0 - 8, 64);
