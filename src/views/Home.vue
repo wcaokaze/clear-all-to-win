@@ -1,9 +1,9 @@
 <template>
     <div class="home">
         <div class="field">
-            <Cell class="cell" />
-            <Cell class="cell"/>
-            <Cell class="cell"/>
+            <Cell class="cell" :style="cellStyle"/>
+            <Cell class="cell" :style="cellStyle"/>
+            <Cell class="cell" :style="cellStyle"/>
         </div>
     </div>
 </template>
@@ -17,7 +17,34 @@
             Cell
         }
     })
-    export default class Home extends Vue {}
+    export default class Home extends Vue {
+        private width  = 0;
+        private height = 0;
+
+        private get cellStyle(): string {
+            const cellSize = this.width / 3.0 - 8;
+
+            return `
+               width:  ${cellSize}px;
+               height: ${cellSize}px;
+               margin: 4px;
+            `;
+        }
+
+        private updateWindowSize() {
+            this.width  = window.innerWidth;
+            this.height = window.innerHeight;
+        }
+
+        mounted() {
+            this.updateWindowSize();
+            window.addEventListener('resize', this.updateWindowSize);
+        }
+
+        beforeDestroy() {
+            window.removeEventListener('resize', this.updateWindowSize);
+        }
+    }
 </script>
 
 <style lang="stylus">
@@ -27,11 +54,5 @@
         flex-direction row
         flex-wrap nowrap
         justify-content center
-
-        .cell {
-            width  48px
-            height 48px
-            margin 4px
-        }
     }
 </style>
