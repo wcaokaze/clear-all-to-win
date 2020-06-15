@@ -4,13 +4,14 @@
             <Cell class="cell"
                   v-for="columnIdx in columnCount"
                   :style="cellStyle"
-                  :is-live="getCell(columnIdx - 1, rowIdx - 1)"/>
+                  :is-live="getCell(columnIdx - 1, rowIdx - 1)"
+                  @click="onCellClick(columnIdx - 1, rowIdx - 1)"/>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {Component, Emit, Prop, Vue} from "vue-property-decorator";
     import Cell from '@/components/Cell.vue'
 
     @Component({
@@ -23,6 +24,8 @@
         private height = 0;
 
         @Prop() private field?: boolean[][];
+
+        @Emit("cellClick") private onCellClick(x: number, y: number) {}
 
         private get rowCount(): number {
             if (this.field === undefined) { return 0; }

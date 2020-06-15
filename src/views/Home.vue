@@ -1,6 +1,6 @@
 <template>
     <div class="home">
-        <Field :field="field" />
+        <Field :field="field" @cellClick="onCellClick"/>
     </div>
 </template>
 
@@ -19,6 +19,12 @@
             [true,  true,  false],
             [false, true,  true ]
         ];
+
+        private onCellClick(x: number, y: number) {
+            const field = this.field.concat();
+            field[y][x] = !field[y][x];
+            this.field = field;
+        }
     }
 </script>
 

@@ -1,13 +1,15 @@
 <template>
-    <span :class="{ live: isLive, dead: !isLive }"></span>
+    <span :class="{ live: isLive, dead: !isLive }" @click="onClick"></span>
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {Component, Emit, Prop, Vue} from "vue-property-decorator";
 
     @Component
     export default class Cell extends Vue {
         @Prop() private isLive?: boolean;
+
+        @Emit("click") private onClick() {}
     }
 </script>
 
