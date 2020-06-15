@@ -1,8 +1,11 @@
 <template>
     <div class="home">
         <div class="field">
-            <div class="row" v-for="row in field">
-                <Cell class="cell" v-for="cell in row" :style="cellStyle" :is-live="cell"/>
+            <div class="row" v-for="rowIdx in rowCount">
+                <Cell class="cell"
+                      v-for="columnIdx in columnCount"
+                      :style="cellStyle"
+                      :is-live="getCell(columnIdx - 1, rowIdx - 1)"/>
             </div>
         </div>
     </div>
@@ -27,8 +30,23 @@
             [false, true,  true ]
         ];
 
+        private get rowCount(): number {
+            return this.field.length;
+        }
+
+        private get columnCount(): number {
+            return this.field
+                .map(row => row.length)
+                .reduce((a, b) => Math.max(a, b));
+        }
+
+        private getCell(x: number, y: number): boolean {
+            const row = this.field[y] ?? [];
+            return row[x] ?? false;
+        }
+
         private get cellStyle(): string {
-            const cellSize = Math.min(this.width / 3.0 - 8, 64);
+            const cellSize = Math.min(this.width / this.columnCount - 8, 64);
 
             return `
                width:  ${cellSize}px;
