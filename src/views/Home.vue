@@ -22,7 +22,7 @@
         private height = 0;
 
         private get cellStyle(): string {
-            const cellSize = this.width / 3.0 - 8;
+            const cellSize = Math.min(this.width / 3.0 - 8, 64);
 
             return `
                width:  ${cellSize}px;
