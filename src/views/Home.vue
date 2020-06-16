@@ -14,17 +14,17 @@
         }
     })
     export default class Home extends Vue {
-        private field: boolean[][] = [
-            [true,  false, false],
-            [true,  true,  false],
-            [false, true,  true ]
-        ];
+        private field: boolean[][] = [];
 
         private rule = [
             [false, true, false],
             [true,  true, true ],
             [false, true, false]
         ];
+
+        mounted() {
+            this.generateRandomField(5, 5);
+        }
 
         private onCellClick(clickedX: number, clickedY: number) {
             const field = this.field.concat();
@@ -45,6 +45,14 @@
             }
 
             this.field = field;
+        }
+
+        private generateRandomField(columnCount: number, rowCount: number) {
+            this.field = Array.from(Array(columnCount), () =>
+                Array.from(Array(rowCount), () =>
+                    Math.random() > 0.5
+                )
+            );
         }
     }
 </script>

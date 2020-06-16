@@ -38,7 +38,7 @@
 
             return this.field
                 .map(column => column.length)
-                .reduce((a, b) => Math.max(a, b));
+                .reduce((a, b) => Math.max(a, b), /* initialValue = */ 0);
         }
 
         private getCell(x: number, y: number): boolean {
