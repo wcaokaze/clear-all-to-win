@@ -37,14 +37,14 @@
             if (this.field === undefined) { return 0; }
 
             return this.field
-                .map(row => row.length)
+                .map(column => column.length)
                 .reduce((a, b) => Math.max(a, b));
         }
 
         private getCell(x: number, y: number): boolean {
             const field = this.field ?? [];
-            const row = field[y] ?? [];
-            return row[x] ?? false;
+            const column = field[x] ?? [];
+            return column[y] ?? false;
         }
 
         private get cellStyle(): string {

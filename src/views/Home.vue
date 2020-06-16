@@ -20,9 +20,30 @@
             [false, true,  true ]
         ];
 
-        private onCellClick(x: number, y: number) {
+        private rule = [
+            [false, true, false],
+            [true,  true, true ],
+            [false, true, false]
+        ];
+
+        private onCellClick(clickedX: number, clickedY: number) {
             const field = this.field.concat();
-            field[y][x] = !field[y][x];
+            const rule = this.rule;
+
+            for (let dx = -1; dx <= 1; dx++) {
+                for (let dy = -1; dy <= 1; dy++) {
+                    const x = clickedX + dx;
+                    const y = clickedY + dy;
+
+                    if (x < 0 || x >= field.length) { continue; }
+                    if (y < 0 || y >= field.length) { continue; }
+
+                    if (rule[dx + 1][dy + 1]) {
+                        field[x][y] = !field[x][y];
+                    }
+                }
+            }
+
             this.field = field;
         }
     }
