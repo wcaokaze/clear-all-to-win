@@ -1,8 +1,8 @@
 <template>
     <div class="home">
-        <div class="field">
-            <DurationDisplay :duration-millis="duration"/>
-            <Field :field="field" @cellClick="onCellClick"/>
+        <div class="main">
+            <DurationDisplay class="duration" :duration-millis="duration"/>
+            <Field class="field" :field="field" @cellClick="onCellClick"/>
             <button class="retry" @click="reset">やり直す</button>
         </div>
         <div class="cleared" v-if="isCleared">
@@ -129,8 +129,16 @@
 </script>
 
 <style lang="stylus">
-    .field {
+    .main {
         position relative
+
+        .duration {
+            margin 16px
+        }
+
+        .field {
+            margin 16px auto
+        }
 
         .retry {
             margin 16px
@@ -141,13 +149,14 @@
         width 100%
         position absolute
         top 168px
+        margin auto
 
         span {
             padding 32px
-            color #00c15a
+            color #73e5bf
             font-size 150%
             font-weight bold
-            background-color #fff
+            background-color #aaaaaa
         }
     }
 </style>

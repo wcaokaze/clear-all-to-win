@@ -18,11 +18,11 @@
         background-clip padding-box
 
         &.live {
-            background-color aquamarine
+            background-color #7fffd4
         }
 
         &.dead {
-            background-color gray
+            background-color #6a6a6a
         }
     }
 </style>

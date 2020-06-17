@@ -25,8 +25,8 @@
 
 <style scoped lang="stylus">
     .duration {
-        margin 16px
-        color #00aac1
-        font-size 150%
+        color #18bb8c
+        font-size 200%
+        font-weight 530
     }
 </style>

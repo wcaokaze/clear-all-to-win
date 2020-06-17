@@ -48,7 +48,8 @@
         }
 
         private get cellStyle(): string {
-            const cellSize = Math.min(this.width / this.columnCount - 8, 64);
+            const fieldSize = this.width - 12;
+            const cellSize = Math.min(fieldSize / this.columnCount - 8, 64);
 
             return `
                width:  ${cellSize}px;
@@ -75,13 +76,15 @@
 
 <style scoped lang="stylus">
     .field {
-        width 100%
+        width fit-content
+        align-self center
+        padding 4px
+        background-color #3b3b3b
         display flex
         flex-direction column
         flex-wrap nowrap
 
         .row {
-            width 100%
             display flex
             flex-direction row
             flex-wrap nowrap
