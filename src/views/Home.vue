@@ -1,6 +1,11 @@
 <template>
     <div class="home">
-        <Field :field="field" @cellClick="onCellClick"/>
+        <Field class="field" :field="field" @cellClick="onCellClick"/>
+        <div class="cleared" v-if="isCleared">
+            <span>
+                CLEAR
+            </span>
+        </div>
     </div>
 </template>
 
@@ -24,6 +29,10 @@
 
         mounted() {
             this.field = Home.generateRandomField(5, 5, 15, this.rule);
+        }
+
+        private get isCleared(): boolean {
+            return this.field.every(column => column.every(cell => !cell));
         }
 
         private onCellClick(clickedX: number, clickedY: number) {
@@ -79,4 +88,22 @@
 </script>
 
 <style lang="stylus">
+    .field {
+        position absolute
+        top 0
+    }
+
+    .cleared {
+        width 100%
+        position absolute
+        top 48px
+
+        span {
+            padding 32px
+            color #00c15a
+            font-size 150%
+            font-weight bold
+            background-color #fff
+        }
+    }
 </style>
