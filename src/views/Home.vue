@@ -35,32 +35,47 @@
         ];
 
         private duration = 0;
-        private timerHandle?: number;
+        private timerHandle: number|null = null;
 
         mounted() {
             this.initialField = Home.generateRandomField(5, 5, 15, this.rule);
             this.field = JSON.parse(JSON.stringify(this.initialField));
-            this.timerHandle = setInterval(() => { this.duration += 1000 }, 1000);
         }
 
         private get isCleared(): boolean {
             return this.field.every(column => column.every(cell => !cell));
         }
 
+        private startTimerIfNotStartedYet() {
+           if (this.timerHandle == null) {
+               this.timerHandle = setInterval(() => { this.duration += 1000 }, 1000);
+           }
+        }
+
+        private stopTimer() {
+            if (this.timerHandle != null) {
+                clearInterval(this.timerHandle);
+                this.timerHandle = null;
+            }
+        }
+
         @Watch('isCleared')
         private stopTimerIfCleared() {
             if (this.isCleared) {
-                clearInterval(this.timerHandle);
+                this.stopTimer();
             }
         }
 
         private reset() {
             this.duration = 0;
+            this.stopTimer();
             this.field = JSON.parse(JSON.stringify(this.initialField));
         }
 
         private onCellClick(clickedX: number, clickedY: number) {
             if (this.isCleared) { return; }
+
+            this.startTimerIfNotStartedYet();
 
             const field = this.field.concat();
             Home.invert(field, clickedX, clickedY, this.rule);
