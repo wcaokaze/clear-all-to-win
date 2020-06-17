@@ -1,6 +1,9 @@
 <template>
     <div class="home">
-        <Field class="field" :field="field" @cellClick="onCellClick"/>
+        <div class="field">
+            <div class="duration">{{formattedTime}}</div>
+            <Field :field="field" @cellClick="onCellClick"/>
+        </div>
         <div class="cleared" v-if="isCleared">
             <span>
                 CLEAR
@@ -10,7 +13,7 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
+    import {Component, Vue, Watch} from "vue-property-decorator";
     import Field from '@/components/Field.vue'
 
     @Component({
@@ -27,12 +30,34 @@
             [false, true, false]
         ];
 
+        private duration = 0;
+        private timerHandle?: number;
+
         mounted() {
             this.field = Home.generateRandomField(5, 5, 15, this.rule);
+            this.timerHandle = setInterval(() => { this.duration += 1000 }, 1000);
         }
 
         private get isCleared(): boolean {
             return this.field.every(column => column.every(cell => !cell));
+        }
+
+        private get formattedTime(): string {
+            const min = Math.floor( this.duration / 1000  / 60).toString();
+            const sec = Math.floor((this.duration / 1000) % 60).toString();
+
+            if (sec.length == 1) {
+                return `${min}:0${sec}`;
+            } else {
+                return `${min}:${sec}`;
+            }
+        }
+
+        @Watch('isCleared')
+        private stopTimerIfCleared() {
+            if (this.isCleared) {
+                clearInterval(this.timerHandle);
+            }
         }
 
         private onCellClick(clickedX: number, clickedY: number) {
@@ -89,14 +114,19 @@
 
 <style lang="stylus">
     .field {
-        position absolute
-        top 0
+        position relative
+
+        .duration {
+            margin 16px
+            color #00aac1
+            font-size 150%
+        }
     }
 
     .cleared {
         width 100%
         position absolute
-        top 48px
+        top 168px
 
         span {
             padding 32px
