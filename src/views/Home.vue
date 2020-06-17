@@ -3,6 +3,7 @@
         <div class="field">
             <DurationDisplay :duration-millis="duration"/>
             <Field :field="field" @cellClick="onCellClick"/>
+            <button class="retry" @click="reset">やり直す</button>
         </div>
         <div class="cleared" v-if="isCleared">
             <span>
@@ -24,6 +25,7 @@
         }
     })
     export default class Home extends Vue {
+        private initialField: boolean[][] = [];
         private field: boolean[][] = [];
 
         private rule = [
@@ -36,7 +38,8 @@
         private timerHandle?: number;
 
         mounted() {
-            this.field = Home.generateRandomField(5, 5, 15, this.rule);
+            this.initialField = Home.generateRandomField(5, 5, 15, this.rule);
+            this.field = JSON.parse(JSON.stringify(this.initialField));
             this.timerHandle = setInterval(() => { this.duration += 1000 }, 1000);
         }
 
@@ -49,6 +52,11 @@
             if (this.isCleared) {
                 clearInterval(this.timerHandle);
             }
+        }
+
+        private reset() {
+            this.duration = 0;
+            this.field = JSON.parse(JSON.stringify(this.initialField));
         }
 
         private onCellClick(clickedX: number, clickedY: number) {
@@ -108,6 +116,10 @@
 <style lang="stylus">
     .field {
         position relative
+
+        .retry {
+            margin 16px
+        }
     }
 
     .cleared {
