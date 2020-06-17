@@ -1,7 +1,7 @@
 <template>
     <div class="home">
         <div class="field">
-            <div class="duration">{{formattedTime}}</div>
+            <DurationDisplay :duration-millis="duration"/>
             <Field :field="field" @cellClick="onCellClick"/>
         </div>
         <div class="cleared" v-if="isCleared">
@@ -14,11 +14,13 @@
 
 <script lang="ts">
     import {Component, Vue, Watch} from "vue-property-decorator";
-    import Field from '@/components/Field.vue'
+    import Field from '@/components/Field.vue';
+    import DurationDisplay from "@/components/DurationDisplay.vue";
 
     @Component({
         components: {
-            Field
+            Field,
+            DurationDisplay
         }
     })
     export default class Home extends Vue {
@@ -40,17 +42,6 @@
 
         private get isCleared(): boolean {
             return this.field.every(column => column.every(cell => !cell));
-        }
-
-        private get formattedTime(): string {
-            const min = Math.floor( this.duration / 1000  / 60).toString();
-            const sec = Math.floor((this.duration / 1000) % 60).toString();
-
-            if (sec.length == 1) {
-                return `${min}:0${sec}`;
-            } else {
-                return `${min}:${sec}`;
-            }
         }
 
         @Watch('isCleared')
@@ -117,12 +108,6 @@
 <style lang="stylus">
     .field {
         position relative
-
-        .duration {
-            margin 16px
-            color #00aac1
-            font-size 150%
-        }
     }
 
     .cleared {
