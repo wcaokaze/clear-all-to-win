@@ -61,6 +61,8 @@
         }
 
         private onCellClick(clickedX: number, clickedY: number) {
+            if (this.isCleared) { return; }
+
             const field = this.field.concat();
             Home.invert(field, clickedX, clickedY, this.rule);
             this.field = field;
