@@ -17,6 +17,7 @@
     import {Component, Vue, Watch} from "vue-property-decorator";
     import Field from '@/components/Field.vue';
     import DurationDisplay from "@/components/DurationDisplay.vue";
+    import {fieldModule} from '@/store/FieldModule';
 
     @Component({
         components: {
@@ -25,25 +26,19 @@
         }
     })
     export default class Home extends Vue {
-        private initialField: boolean[][] = [];
-        private field: boolean[][] = [];
-
-        private rule = [
-            [false, true, false],
-            [true,  true, true ],
-            [false, true, false]
-        ];
-
         private duration = 0;
         private timerHandle: number|null = null;
 
         mounted() {
-            this.initialField = Home.generateRandomField(5, 5, 15, this.rule);
-            this.field = JSON.parse(JSON.stringify(this.initialField));
+            fieldModule.setNewRandomField();
         }
 
-        private get isCleared(): boolean {
-            return this.field.every(column => column.every(cell => !cell));
+        get field(): boolean[][] {
+            return fieldModule.field;
+        }
+
+        get isCleared(): boolean {
+            return fieldModule.isCleared;
         }
 
         private startTimerIfNotStartedYet() {
@@ -69,61 +64,14 @@
         private reset() {
             this.duration = 0;
             this.stopTimer();
-            this.field = JSON.parse(JSON.stringify(this.initialField));
+            fieldModule.reset();
         }
 
         private onCellClick(clickedX: number, clickedY: number) {
             if (this.isCleared) { return; }
 
             this.startTimerIfNotStartedYet();
-
-            const field = this.field.concat();
-            Home.invert(field, clickedX, clickedY, this.rule);
-            this.field = field;
-        }
-
-        private static invert(field: boolean[][],
-                              targetX: number,
-                              targetY: number,
-                              rule: boolean[][])
-        {
-            for (let dx = -1; dx <= 1; dx++) {
-                for (let dy = -1; dy <= 1; dy++) {
-                    const x = targetX + dx;
-                    const y = targetY + dy;
-
-                    if (x < 0 || x >= field.length) { continue; }
-                    if (y < 0 || y >= field.length) { continue; }
-
-                    if (rule[dx + 1][dy + 1]) {
-                        field[x][y] = !field[x][y];
-                    }
-                }
-            }
-        }
-
-        private static generateRandomField(
-            columnCount: number,
-            rowCount: number,
-            complexity: number,
-            rule: boolean[][]
-        ): boolean[][] {
-            const field = Array.from(
-                Array(columnCount),
-                () => Array.from(
-                    Array(rowCount),
-                    () => false
-                )
-            );
-
-            for (let i = 0; i < complexity; i++) {
-                const x = Math.floor(Math.random() * columnCount);
-                const y = Math.floor(Math.random() * rowCount);
-
-                this.invert(field, x, y, rule);
-            }
-
-            return field;
+            fieldModule.invert({ targetX: clickedX, targetY: clickedY });
         }
     }
 </script>
