@@ -27,13 +27,13 @@
 
         @Emit("cellClick") private onCellClick(x: number, y: number) {}
 
-        private get rowCount(): number {
+        private get columnCount(): number {
             if (this.field === undefined) { return 0; }
 
             return this.field.length;
         }
 
-        private get columnCount(): number {
+        private get rowCount(): number {
             if (this.field === undefined) { return 0; }
 
             return this.field

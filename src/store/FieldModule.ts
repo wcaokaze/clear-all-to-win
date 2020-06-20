@@ -39,8 +39,10 @@ class FieldModule extends VuexModule {
     }
 
     @Action
-    setNewRandomField() {
-        this.setInitialField(FieldModule.generateRandomField(5, 5, 15, this.rule));
+    setNewRandomField(arg: { width: number, height: number }) {
+        this.setInitialField(
+            FieldModule.generateRandomField(arg.width, arg.height, 15, this.rule));
+
         this.reset();
     }
 
@@ -61,8 +63,8 @@ class FieldModule extends VuexModule {
                 const x = targetX + dx;
                 const y = targetY + dy;
 
-                if (x < 0 || x >= field.length) { continue; }
-                if (y < 0 || y >= field.length) { continue; }
+                if (x < 0 || x >= field   .length) { continue; }
+                if (y < 0 || y >= field[x].length) { continue; }
 
                 if (rule[dx + 1][dy + 1]) {
                     field[x][y] = !field[x][y];

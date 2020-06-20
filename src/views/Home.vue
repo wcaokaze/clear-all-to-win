@@ -2,13 +2,35 @@
     <div class="home">
         <div class="main">
             <DurationDisplay class="duration" :duration-millis="duration"/>
+
             <Field class="field" :field="field" @cellClick="onCellClick"/>
-            <button class="retry" @click="reset">やり直す</button>
+
+            <button class="footer-button" @click="reset">やり直す</button>
+            <button class="footer-button" @click="isNewGameDialogShown = true">NEW GAME!</button>
         </div>
+
         <div class="cleared" v-if="isCleared">
             <span>
                 CLEAR
             </span>
+        </div>
+
+        <div class="new-game-dialog" v-if="isNewGameDialogShown">
+            <div class="background" @click="isNewGameDialogShown = false"/>
+
+            <div class="foreground">
+                <div>
+                    <label>
+                        <input type="number" v-model="inputFieldWidth">
+                        ×
+                        <input type="number" v-model="inputFieldHeight">
+                    </label>
+                </div>
+
+                <button @click="regenerateField(); isNewGameDialogShown = false">
+                    スタート
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -26,11 +48,35 @@
         }
     })
     export default class Home extends Vue {
+        private isNewGameDialogShown = false;
+        private inputFieldWidth  = '5';
+        private inputFieldHeight = '5';
+
         private duration = 0;
         private timerHandle: number|null = null;
 
         mounted() {
-            fieldModule.setNewRandomField();
+            this.regenerateField();
+        }
+
+        private get fieldWidth(): number {
+            const width = parseInt(this.inputFieldWidth);
+
+            if (isNaN(width)) {
+                return 5;
+            } else {
+                return width;
+            }
+        }
+
+        private get fieldHeight(): number {
+            const height = parseInt(this.inputFieldHeight);
+
+            if (isNaN(height)) {
+                return 5;
+            } else {
+                return height;
+            }
         }
 
         get field(): boolean[][] {
@@ -61,6 +107,13 @@
             }
         }
 
+        private regenerateField() {
+            fieldModule.setNewRandomField({
+                width:  this.fieldWidth,
+                height: this.fieldHeight
+            });
+        }
+
         private reset() {
             this.duration = 0;
             this.stopTimer();
@@ -88,8 +141,8 @@
             margin 16px auto
         }
 
-        .retry {
-            margin 16px
+        .footer-button {
+            margin 16px 8px
         }
     }
 
@@ -105,6 +158,43 @@
             font-size 150%
             font-weight bold
             background-color #aaaaaa
+        }
+    }
+
+    .new-game-dialog {
+        width 100%
+        height 100%
+        position absolute
+        top 0
+        padding 160px 0
+
+        .background {
+            width 100%
+            height 100%
+            position absolute
+            top 0
+            background-color rgba(0, 0, 0, 0.5)
+        }
+
+        .foreground {
+            width fit-content
+            position absolute
+            left 50%
+            transform translateX(-50%)
+            padding 16px 32px
+            background-color #aaaaaa
+
+            div {
+                margin 8px
+
+                input {
+                    width 3em
+                }
+            }
+
+            button {
+                margin 8px
+            }
         }
     }
 </style>
