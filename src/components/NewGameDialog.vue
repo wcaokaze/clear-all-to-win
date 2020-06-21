@@ -18,6 +18,9 @@
 
     @Component
     export default class NewGameDialog extends Vue {
+        private static readonly MIN_SIZE = 3;
+        private static readonly MAX_SIZE = 10;
+
         private inputWidth  = '5';
         private inputHeight = '5';
 
@@ -25,15 +28,16 @@
         private normalizedHeight = 5;
 
         private static normalize(input: string): number|null {
-            if (input == '') { return 0; }
+            if (input == '') { return NewGameDialog.MIN_SIZE; }
 
-            const i = parseInt(input);
+            let i = parseInt(input);
 
-            if (isNaN(i)) {
-                return null;
-            } else {
-                return i;
-            }
+            if (isNaN(i)) { return null; }
+
+            i = Math.max(i, NewGameDialog.MIN_SIZE);
+            i = Math.min(i, NewGameDialog.MAX_SIZE);
+
+            return i;
         }
 
         @Watch('inputWidth')
