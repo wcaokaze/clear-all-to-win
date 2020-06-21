@@ -15,22 +15,9 @@
             </span>
         </div>
 
-        <div class="new-game-dialog" v-if="isNewGameDialogShown">
+        <div class="new-game-dialog" v-show="isNewGameDialogShown">
             <div class="background" @click="isNewGameDialogShown = false"/>
-
-            <div class="foreground">
-                <div>
-                    <label>
-                        <input type="number" v-model="inputFieldWidth">
-                        ×
-                        <input type="number" v-model="inputFieldHeight">
-                    </label>
-                </div>
-
-                <button @click="regenerateField(); isNewGameDialogShown = false">
-                    スタート
-                </button>
-            </div>
+            <NewGameDialog class="foreground" @submit="onSubmitNewFieldSize"/>
         </div>
     </div>
 </template>
@@ -39,44 +26,24 @@
     import {Component, Vue, Watch} from "vue-property-decorator";
     import Field from '@/components/Field.vue';
     import DurationDisplay from "@/components/DurationDisplay.vue";
+    import NewGameDialog from "@/components/NewGameDialog.vue";
     import {fieldModule} from '@/store/FieldModule';
 
     @Component({
         components: {
             Field,
-            DurationDisplay
+            DurationDisplay,
+            NewGameDialog
         }
     })
     export default class Home extends Vue {
         private isNewGameDialogShown = false;
-        private inputFieldWidth  = '5';
-        private inputFieldHeight = '5';
 
         private duration = 0;
         private timerHandle: number|null = null;
 
         mounted() {
-            this.regenerateField();
-        }
-
-        private get fieldWidth(): number {
-            const width = parseInt(this.inputFieldWidth);
-
-            if (isNaN(width)) {
-                return 5;
-            } else {
-                return width;
-            }
-        }
-
-        private get fieldHeight(): number {
-            const height = parseInt(this.inputFieldHeight);
-
-            if (isNaN(height)) {
-                return 5;
-            } else {
-                return height;
-            }
+            fieldModule.setNewRandomField({ width: 5, height: 5 });
         }
 
         get field(): boolean[][] {
@@ -107,11 +74,9 @@
             }
         }
 
-        private regenerateField() {
-            fieldModule.setNewRandomField({
-                width:  this.fieldWidth,
-                height: this.fieldHeight
-            });
+        private onSubmitNewFieldSize(width: number, height: number) {
+            fieldModule.setNewRandomField({width, height});
+            this.isNewGameDialogShown = false;
         }
 
         private reset() {
@@ -181,20 +146,6 @@
             position absolute
             left 50%
             transform translateX(-50%)
-            padding 16px 32px
-            background-color #aaaaaa
-
-            div {
-                margin 8px
-
-                input {
-                    width 3em
-                }
-            }
-
-            button {
-                margin 8px
-            }
         }
     }
 </style>
