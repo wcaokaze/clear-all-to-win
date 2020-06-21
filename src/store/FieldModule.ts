@@ -41,7 +41,13 @@ class FieldModule extends VuexModule {
     @Action
     setNewRandomField(arg: { width: number, height: number }) {
         this.setInitialField(
-            FieldModule.generateRandomField(arg.width, arg.height, 15, this.rule));
+            FieldModule.generateRandomField(
+                arg.width,
+                arg.height,
+                /* complexity = */ Math.pow(arg.width * arg.height, 3.0 / 4.0),
+                this.rule
+            )
+        );
 
         this.reset();
     }
