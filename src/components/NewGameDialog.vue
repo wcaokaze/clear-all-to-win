@@ -2,9 +2,9 @@
     <div class="dialog">
         <div>
             <label>
-                <input type="number" v-model="inputFieldWidth">
+                <input v-model="inputWidth">
                 ×
-                <input type="number" v-model="inputFieldHeight">
+                <input v-model="inputHeight">
             </label>
         </div>
 
@@ -13,37 +13,71 @@
 </template>
 
 <script lang="ts">
-    import {Component, Emit, Vue} from "vue-property-decorator";
+    import {Component, Emit, Vue, Watch} from "vue-property-decorator";
+    import {Debounce} from "vue-debounce-decorator";
 
     @Component
     export default class NewGameDialog extends Vue {
-        private inputFieldWidth  = '5';
-        private inputFieldHeight = '5';
+        private inputWidth  = '5';
+        private inputHeight = '5';
 
-        private get fieldWidth(): number {
-            const width = parseInt(this.inputFieldWidth);
+        private normalizedWidth  = 5;
+        private normalizedHeight = 5;
 
-            if (isNaN(width)) {
-                return 5;
+        private static normalize(input: string): number|null {
+            if (input == '') { return 0; }
+
+            const i = parseInt(input);
+
+            if (isNaN(i)) {
+                return null;
             } else {
-                return width;
+                return i;
             }
         }
 
-        private get fieldHeight(): number {
-            const height = parseInt(this.inputFieldHeight);
+        @Watch('inputWidth')
+        private normalizedInputWidth() {
+            const w = NewGameDialog.normalize(this.inputWidth);
 
-            if (isNaN(height)) {
-                return 5;
-            } else {
-                return height;
+            if (w != null) {
+                this.normalizedWidth = w;
+            }
+        }
+
+        @Watch('inputHeight')
+        private normalizedInputHeight() {
+            const h = NewGameDialog.normalize(this.inputHeight);
+
+            if (h != null) {
+                this.normalizedHeight = h;
+            }
+        }
+
+        @Watch('inputWidth')
+        @Debounce(1000)
+        private setNormalizedWidth() {
+            if (this.inputWidth == '') { return; }
+
+            if (this.inputWidth != this.normalizedWidth.toString()) {
+                this.inputWidth = this.normalizedWidth.toString();
+            }
+        }
+
+        @Watch('inputHeight')
+        @Debounce(1000)
+        private setNormalizedHeight() {
+            if (this.inputHeight == '') { return; }
+
+            if (this.inputHeight != this.normalizedHeight.toString()) {
+                this.inputHeight = this.normalizedHeight.toString();
             }
         }
 
         @Emit() private submit(width: number, height: number) {}
 
         private onButtonClick() {
-            this.submit(this.fieldWidth, this.fieldHeight);
+            this.submit(this.normalizedWidth, this.normalizedHeight);
         }
     }
 </script>
