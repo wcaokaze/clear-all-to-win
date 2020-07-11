@@ -9,12 +9,11 @@
             <button class="footer-button" @click="isNewGameDialogShown = true">NEW GAME!</button>
         </div>
 
-        <div class="cleared" v-if="isCleared">
-            <div class="caption">CLEAR!!</div>
-
-            <span class="time">{{formattedTime}}</span>
-            <span class="step-count">{{steps.length}}手</span>
-        </div>
+        <ClearedDialog
+                class="cleared-dialog"
+                v-if="isCleared"
+                :duration-millis="duration"
+                :step-count="steps.length"/>
 
         <div class="new-game-dialog" v-show="isNewGameDialogShown">
             <div class="background" @click="isNewGameDialogShown = false"/>
@@ -29,11 +28,13 @@
     import DurationDisplay from "@/components/DurationDisplay.vue";
     import NewGameDialog from "@/components/NewGameDialog.vue";
     import {fieldModule} from '@/store/FieldModule';
+    import ClearedDialog from "@/components/ClearedDialog.vue";
 
     type Step = { time: number, point: number[] };
 
     @Component({
         components: {
+            ClearedDialog,
             Field,
             DurationDisplay,
             NewGameDialog
@@ -58,18 +59,6 @@
 
         get isCleared(): boolean {
             return fieldModule.isCleared;
-        }
-
-        private get formattedTime(): string {
-            const duration = this.duration ?? 0;
-            const min = Math.floor( duration / 1000  / 60).toString();
-            const sec = Math.floor((duration / 1000) % 60).toString();
-
-            if (sec.length == 1) {
-                return `${min}分0${sec}秒`;
-            } else {
-                return `${min}分${sec}秒`;
-            }
         }
 
         private startTimerIfNotStartedYet() {
@@ -137,27 +126,13 @@
         }
     }
 
-    .cleared {
+    .cleared-dialog {
         width fit-content
         position absolute
         top 168px
         left 0
         right 0
         margin auto
-        padding 16px 24px
-        background-color #aaaaaa
-
-        .caption {
-            margin 16px
-            color #73e5bf
-            font-size 150%
-            font-weight bold
-        }
-
-        .time, .step-count {
-            margin 4px
-            color #3b3b3b
-        }
     }
 
     .new-game-dialog {
