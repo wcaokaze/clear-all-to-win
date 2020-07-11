@@ -10,9 +10,10 @@
         </div>
 
         <div class="cleared" v-if="isCleared">
-            <span>
-                CLEAR
-            </span>
+            <div class="caption">CLEAR!!</div>
+
+            <span class="time">{{formattedTime}}</span>
+            <span class="step-count">{{steps.length}}手</span>
         </div>
 
         <div class="new-game-dialog" v-show="isNewGameDialogShown">
@@ -29,6 +30,8 @@
     import NewGameDialog from "@/components/NewGameDialog.vue";
     import {fieldModule} from '@/store/FieldModule';
 
+    type Step = { time: number, point: number[] };
+
     @Component({
         components: {
             Field,
@@ -38,6 +41,9 @@
     })
     export default class Home extends Vue {
         private isNewGameDialogShown = false;
+
+        private startTime = 0;
+        private steps: Step[] = [];
 
         private duration = 0;
         private timerHandle: number|null = null;
@@ -54,8 +60,21 @@
             return fieldModule.isCleared;
         }
 
+        private get formattedTime(): string {
+            const duration = this.duration ?? 0;
+            const min = Math.floor( duration / 1000  / 60).toString();
+            const sec = Math.floor((duration / 1000) % 60).toString();
+
+            if (sec.length == 1) {
+                return `${min}分0${sec}秒`;
+            } else {
+                return `${min}分${sec}秒`;
+            }
+        }
+
         private startTimerIfNotStartedYet() {
            if (this.timerHandle == null) {
+               this.startTime = Date.now();
                this.timerHandle = setInterval(() => { this.duration += 1000 }, 1000);
            }
         }
@@ -80,6 +99,7 @@
         }
 
         private reset() {
+            this.steps = [];
             this.duration = 0;
             this.stopTimer();
             fieldModule.reset();
@@ -89,6 +109,12 @@
             if (this.isCleared) { return; }
 
             this.startTimerIfNotStartedYet();
+
+            this.steps.push({
+                time: Date.now() - this.startTime,
+                point: [clickedX, clickedY]
+            });
+
             fieldModule.invert({ targetX: clickedX, targetY: clickedY });
         }
     }
@@ -112,17 +138,25 @@
     }
 
     .cleared {
-        width 100%
+        width fit-content
         position absolute
         top 168px
+        left 0
+        right 0
         margin auto
+        padding 16px 24px
+        background-color #aaaaaa
 
-        span {
-            padding 32px
+        .caption {
+            margin 16px
             color #73e5bf
             font-size 150%
             font-weight bold
-            background-color #aaaaaa
+        }
+
+        .time, .step-count {
+            margin 4px
+            color #3b3b3b
         }
     }
 
