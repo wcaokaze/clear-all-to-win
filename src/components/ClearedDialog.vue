@@ -2,13 +2,21 @@
     <div class="dialog">
         <div class="caption">CLEAR!!</div>
 
-        <span class="time">{{formattedTime}}</span>
-        <span class="step-count">{{stepCount}}手</span>
+        <div class="score">
+            {{formattedTime}}、
+            {{stepCount}}手
+        </div>
+
+        <div>
+            <a :href="tweetButtonHref"
+               class="twitter-share-button" data-show-count="false" data-lang="ja">Tweet</a>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
     import {Component, Prop, Vue} from "vue-property-decorator";
+    import config from '@/config/api';
 
     @Component
     export default class ClearedDialog extends Vue {
@@ -26,6 +34,20 @@
                 return `${min}分${sec}秒`;
             }
         }
+
+        private get tweetButtonHref(): string {
+            const url = 'https://twitter.com/intent/tweet?lang=ja';
+            const message = `#全消ししたら勝ち を${this.formattedTime}、${this.stepCount}手でクリアしました！`;
+
+            return `${url}&text=${encodeURI(message)}&url=${encodeURI(config.webBaseUrl)}`;
+        }
+
+        mounted() {
+            const scriptElement = document.createElement('script');
+            scriptElement.async = true;
+            scriptElement.src = 'https://platform.twitter.com/widgets.js';
+            document.head.appendChild(scriptElement);
+        }
     }
 </script>
 
@@ -41,7 +63,7 @@
             font-weight bold
         }
 
-        .time, .step-count {
+        .score {
             margin 4px
             color #3b3b3b
         }
