@@ -83,6 +83,7 @@
         }
 
         private onSubmitNewFieldSize(width: number, height: number) {
+            this.reset();
             fieldModule.setNewRandomField({width, height});
             this.isNewGameDialogShown = false;
         }
