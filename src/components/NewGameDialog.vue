@@ -21,11 +21,11 @@
         private static readonly MIN_SIZE = 3;
         private static readonly MAX_SIZE = 10;
 
-        private inputWidth  = '5';
-        private inputHeight = '5';
+        private inputWidth  = '4';
+        private inputHeight = '4';
 
-        private normalizedWidth  = 5;
-        private normalizedHeight = 5;
+        private normalizedWidth  = 4;
+        private normalizedHeight = 4;
 
         private static normalize(input: string): number|null {
             if (input == '') { return NewGameDialog.MIN_SIZE; }

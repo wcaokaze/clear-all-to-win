@@ -50,7 +50,7 @@
         private timerHandle: number|null = null;
 
         mounted() {
-            fieldModule.setNewRandomField({ width: 5, height: 5 });
+            fieldModule.setNewRandomField({ width: 4, height: 4 });
         }
 
         get field(): boolean[][] {
