@@ -6,6 +6,8 @@ import {
     VuexModule
 } from "vuex-module-decorators";
 
+import axios from 'axios';
+import config from '@/config/api';
 import store from'./index';
 
 @Module({ dynamic: true, store, name: 'field', namespaced: true })
@@ -36,6 +38,25 @@ class FieldModule extends VuexModule {
     @Mutation
     private setField(field: boolean[][]) {
         this.field = field;
+    }
+
+    @Action
+    fetchInitialField(arg: { id: string }) {
+        this.setInitialField([
+            [false, true,  false, false],
+            [false, true,  true,  true ],
+            [true,  true,  true,  false],
+            [false, false, true,  false]
+        ]);
+
+        this.reset();
+
+        axios.get(`${config.apiBaseUrl}/gamerecords/${arg.id}`)
+            .then(res => {
+                const cells = res.data['initial_field']['cells'];
+                this.setInitialField(cells);
+                this.reset();
+            });
     }
 
     @Action

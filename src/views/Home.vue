@@ -49,8 +49,15 @@
         private duration = 0;
         private timerHandle: number|null = null;
 
-        mounted() {
-            fieldModule.setNewRandomField({ width: 4, height: 4 });
+        @Watch('$route', { immediate: true })
+        private loadField() {
+            const id = this.$route.params.id;
+
+            if (id) {
+                fieldModule.fetchInitialField({ id: id });
+            } else {
+                fieldModule.setNewRandomField({ width: 4, height: 4 });
+            }
         }
 
         get field(): boolean[][] {

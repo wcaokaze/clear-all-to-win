@@ -12,6 +12,10 @@ export default new VueRouter({
             component: Home
         },
         {
+            path: '/:id',
+            component: Home
+        },
+        {
             path: '/about',
             name: 'About',
             // route level code-splitting
