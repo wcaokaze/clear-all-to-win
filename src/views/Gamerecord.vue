@@ -25,11 +25,13 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
+    import {Component, Vue, Watch} from "vue-property-decorator";
     import Field from '@/components/Field.vue';
     import DurationDisplay from "@/components/DurationDisplay.vue";
     import NewGameDialog from "@/components/NewGameDialog.vue";
     import {fieldModule} from "@/store/FieldModule";
+    import axios from 'axios';
+    import config from '@/config/api';
 
     @Component({
         components: {
@@ -41,7 +43,31 @@
     export default class Gamerecord extends Vue {
         private isNewGameDialogShown = false;
 
+        private gamerecord: any = null;
+        private field: boolean[][] = [];
+        private stepIndex = 0;
+
         private duration = 0;
+
+        @Watch('$route', { immediate: true })
+        private fetchGamerecord() {
+            axios.get(`${config.apiBaseUrl}/gamerecords/${this.$route.params.id}`)
+                .then(res => {
+                    this.gamerecord = res.data;
+                    this.stepIndex = 0;
+                    this.field = this.initialField;
+                });
+        }
+
+        private get initialField(): boolean[][] {
+            const gamerecord = this.gamerecord;
+            if (gamerecord == null) { return []; }
+
+            const initialField = gamerecord['initial_field'];
+            if (!initialField) { return []; }
+
+            return initialField['cells'];
+        }
 
         private startToPlayThisField() {
             this.$router.push(`/${this.$route.params.id}`);
