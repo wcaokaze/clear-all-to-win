@@ -51,11 +51,13 @@
 
         @Watch('$route', { immediate: true })
         private loadField() {
+            this.reset();
+
             const id = this.$route.params.id;
 
             if (id) {
                 fieldModule.fetchInitialField({ id: id });
-            } else {
+            } else if (this.isCleared) {
                 fieldModule.setNewRandomField({ width: 4, height: 4 });
             }
         }
@@ -90,9 +92,9 @@
         }
 
         private onSubmitNewFieldSize(width: number, height: number) {
-            this.reset();
             fieldModule.setNewRandomField({width, height});
             this.isNewGameDialogShown = false;
+            this.$router.push('/');
         }
 
         private reset() {
