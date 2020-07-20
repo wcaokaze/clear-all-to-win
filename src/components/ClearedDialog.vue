@@ -7,7 +7,7 @@
             {{stepCount}}手
         </div>
 
-        <div>
+        <div v-show="gamerecordId != null">
             <a :href="tweetButtonHref"
                class="twitter-share-button" data-show-count="false" data-lang="ja">Tweet</a>
         </div>
@@ -22,6 +22,7 @@
     export default class ClearedDialog extends Vue {
         @Prop() private durationMillis?: number;
         @Prop() private stepCount?: number;
+        @Prop() private gamerecordId?: string|null;
 
         private get formattedTime(): string {
             const duration = this.durationMillis ?? 0;
@@ -38,8 +39,9 @@
         private get tweetButtonHref(): string {
             const url = 'https://twitter.com/intent/tweet?lang=ja';
             const message = `#全消ししたら勝ち を${this.formattedTime}、${this.stepCount}手でクリアしました！`;
+            const gamerecordUrl = `${config.webBaseUrl}/gamerecord/${this.gamerecordId}`;
 
-            return `${url}&text=${encodeURI(message)}&url=${encodeURI(config.webBaseUrl)}`;
+            return `${url}&text=${encodeURI(message)}&url=${encodeURI(gamerecordUrl)}`;
         }
 
         mounted() {

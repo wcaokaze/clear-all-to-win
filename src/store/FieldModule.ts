@@ -12,7 +12,7 @@ import store from'./index';
 
 @Module({ dynamic: true, store, name: 'field', namespaced: true })
 class FieldModule extends VuexModule {
-    private rule = [
+    rule = [
         [false, true, false],
         [true,  true, true ],
         [false, true, false]
