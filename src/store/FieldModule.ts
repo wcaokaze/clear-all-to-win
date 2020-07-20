@@ -31,13 +31,18 @@ class FieldModule extends VuexModule {
     }
 
     @Mutation
-    private setInitialField(initialField: boolean[][]) {
+    setInitialField(initialField: boolean[][]) {
         this.initialField = initialField;
     }
 
     @Mutation
-    private setField(field: boolean[][]) {
+    setField(field: boolean[][]) {
         this.field = field;
+    }
+
+    @Mutation
+    setRule(rule: boolean[][]) {
+        this.rule = rule;
     }
 
     @Action

@@ -1,15 +1,17 @@
 <template>
     <div class="gamerecord">
         <div class="main">
-            <DurationDisplay class="duration" :duration-millis="duration"/>
+            <DurationDisplay class="duration"
+                    :step-count="stepIndex"
+                    :duration-millis="duration"/>
 
             <Field class="field" :field="field"/>
 
             <div>
-                <button class="back-to-first">1手目に戻る</button>
-                <button class="controller-button">1手戻る</button>
+                <button class="back-to-first" @click="reset">0手目に戻る</button>
+                <button class="controller-button" @click="prevStep">1手戻る</button>
                 <button class="controller-button">再生</button>
-                <button class="controller-button">1手進む</button>
+                <button class="controller-button" @click="nextStep">1手進む</button>
             </div>
             <div>
                 <button class="footer-button" @click="startToPlayThisField">このステージをプレイする</button>
@@ -44,7 +46,6 @@
         private isNewGameDialogShown = false;
 
         private gamerecord: any = null;
-        private field: boolean[][] = [];
         private stepIndex = 0;
 
         private duration = 0;
@@ -53,20 +54,69 @@
         private fetchGamerecord() {
             axios.get(`${config.apiBaseUrl}/gamerecords/${this.$route.params.id}`)
                 .then(res => {
-                    this.gamerecord = res.data;
+                    const gamerecord = res.data;
+                    this.gamerecord = gamerecord;
+
+                    const initialField = gamerecord['initial_field'];
+
+                    let cells;
+
+                    if (initialField) {
+                        cells = initialField['cells'];
+                    } else {
+                        cells = [];
+                    }
+
                     this.stepIndex = 0;
-                    this.field = this.initialField;
+
+                    fieldModule.setInitialField(cells);
+                    fieldModule.setField(cells);
+
+                    fieldModule.setRule(gamerecord['rule']);
                 });
         }
 
-        private get initialField(): boolean[][] {
-            const gamerecord = this.gamerecord;
-            if (gamerecord == null) { return []; }
+        get field(): boolean[][] {
+            return fieldModule.field;
+        }
 
-            const initialField = gamerecord['initial_field'];
-            if (!initialField) { return []; }
+        private reset() {
+            this.stepIndex = 0;
+            this.duration = 0;
+            fieldModule.reset();
+        }
 
-            return initialField['cells'];
+        private nextStep() {
+            const steps = this.gamerecord['steps'] ?? [];
+
+            if (this.stepIndex > steps.length - 1) { return; }
+
+            const step = steps[this.stepIndex];
+            const point = step['point'];
+
+            this.stepIndex++;
+
+            fieldModule.invert({ targetX: point[0], targetY: point[1] });
+            this.duration = step['time'];
+        }
+
+        private prevStep() {
+            const steps = this.gamerecord['steps'] ?? [];
+
+            if (this.stepIndex <= 0) { return; }
+
+            this.stepIndex--;
+
+            const step = steps[this.stepIndex];
+            const point = step['point'];
+
+            fieldModule.invert({ targetX: point[0], targetY: point[1] });
+
+            if (this.stepIndex > 0) {
+                this.duration = steps[this.stepIndex - 1]['time'];
+            } else {
+                this.duration = 0;
+            }
         }
 
         private startToPlayThisField() {
