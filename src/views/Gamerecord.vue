@@ -8,10 +8,25 @@
             <Field class="field" :field="field"/>
 
             <div>
-                <button class="back-to-first" @click="reset">0手目に戻る</button>
-                <button class="controller-button" @click="prevStep">1手戻る</button>
-                <button class="controller-button">再生</button>
-                <button class="controller-button" @click="nextStep">1手進む</button>
+                <button class="back-to-first"
+                        @click="stopPlayingGamerecord(); reset()">
+                    0手目に戻る
+                </button>
+
+                <button class="controller-button"
+                        @click="stopPlayingGamerecord(); prevStep()">
+                    1手戻る
+                </button>
+
+                <button class="controller-button"
+                        @click="startToPlayGamerecord">
+                    再生
+                </button>
+
+                <button class="controller-button"
+                        @click="stopPlayingGamerecord(); nextStep()">
+                    1手進む
+                </button>
             </div>
             <div>
                 <button class="footer-button" @click="startToPlayThisField">このステージをプレイする</button>
@@ -47,6 +62,8 @@
 
         private gamerecord: any = null;
         private stepIndex = 0;
+
+        private playerTimerHandle: number|null = null;
 
         private duration = 0;
 
@@ -84,6 +101,18 @@
             this.stepIndex = 0;
             this.duration = 0;
             fieldModule.reset();
+        }
+
+        private startToPlayGamerecord() {
+            if (this.playerTimerHandle != null) { return; }
+
+            this.playerTimerHandle = setInterval(() => this.nextStep(), 500);
+        }
+
+        private stopPlayingGamerecord() {
+            if (this.playerTimerHandle == null) { return; }
+            clearInterval(this.playerTimerHandle);
+            this.playerTimerHandle = null;
         }
 
         private nextStep() {
